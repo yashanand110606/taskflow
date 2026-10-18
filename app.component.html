@@ -1,0 +1,171 @@
+
+<div class="app">
+  <aside class="sidebar">
+    <h2 class="logo">✓ TaskFlow</h2>
+
+    <p class="menu-label">WORKSPACE</p>
+
+    <button class="nav" (click)="filter = 'All'">
+      ▦ Dashboard
+    </button>
+
+    <button class="nav" (click)="filter = 'Pending'">
+      ◷ Pending Tasks
+    </button>
+
+    <button class="nav" (click)="filter = 'Completed'">
+      ✓ Completed Tasks
+    </button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">YOUR WORKSPACE</p>
+        <h1>Task Dashboard</h1>
+        <p class="muted">Organize your work. Get things done.</p>
+      </div>
+
+      <div class="avatar">U</div>
+    </header>
+
+    <section class="stats">
+      <article class="stat-card">
+        <p>Total Tasks</p>
+        <h2>{{ tasks.length }}</h2>
+      </article>
+
+      <article class="stat-card">
+        <p>Completed</p>
+        <h2>{{ completedCount }}</h2>
+      </article>
+
+      <article class="stat-card">
+        <p>Pending</p>
+        <h2>{{ tasks.length - completedCount }}</h2>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2>Add a New Task</h2>
+
+      <form (ngSubmit)="addTask()">
+        <label for="taskTitle">Task name</label>
+
+        <input
+          id="taskTitle"
+          name="taskTitle"
+          type="text"
+          [(ngModel)]="newTitle"
+          placeholder="What do you need to do?"
+          maxlength="100"
+        />
+
+        <label for="priority">Priority</label>
+
+        <select
+          id="priority"
+          name="priority"
+          [(ngModel)]="newPriority"
+        >
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+
+        <button class="primary" type="submit">
+          + Add Task
+        </button>
+
+        <p class="error" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </p>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <h2>My Tasks</h2>
+          <p class="muted">Manage your daily activities.</p>
+        </div>
+
+        <span class="count">
+          {{ filteredTasks.length }} tasks
+        </span>
+      </div>
+
+      <div class="tools">
+        <input
+          type="search"
+          name="search"
+          [(ngModel)]="searchText"
+          placeholder="Search tasks..."
+          aria-label="Search tasks"
+        />
+
+        <select
+          name="filter"
+          [(ngModel)]="filter"
+          aria-label="Filter tasks"
+        >
+          <option value="All">All Tasks</option>
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+
+      <div class="task-list">
+        <div class="task-row" *ngFor="let task of filteredTasks">
+          <input
+            type="checkbox"
+            [checked]="task.completed"
+            (change)="toggleTask(task)"
+            [attr.aria-label]="'Complete ' + task.title"
+          />
+
+          <div class="task-info">
+            <span
+              class="task-title"
+              [class.done]="task.completed"
+            >
+              {{ task.title }}
+            </span>
+
+            <span
+              class="priority"
+              [ngClass]="task.priority.toLowerCase()"
+            >
+              {{ task.priority }} priority
+            </span>
+          </div>
+
+          <span
+            class="status"
+            [class.finished]="task.completed"
+          >
+            {{ task.completed ? 'Completed' : 'Pending' }}
+          </span>
+
+          <button
+            class="delete"
+            type="button"
+            (click)="deleteTask(task.id)"
+            [attr.aria-label]="'Delete ' + task.title"
+          >
+            Delete
+          </button>
+        </div>
+
+        <div class="empty" *ngIf="filteredTasks.length === 0">
+          <h3>No tasks found</h3>
+          <p>Try a different search or add a new task.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      TaskFlow · Stay focused, one task at a time.
+    </footer>
+  </main>
+</div>
